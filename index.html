@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나의 내부통제 업무 유형은?</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --primary:#3157d5;
+      --primary-2:#6c7cff;
+      --shadow:0 14px 36px rgba(28,39,72,.12);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(108,124,255,.15), transparent 28%),
+        radial-gradient(circle at 100% 20%, rgba(49,87,213,.10), transparent 24%),
+        var(--bg);
+      min-height:100vh;
+    }
+    button{font:inherit}
+    .wrap{
+      width:min(760px, calc(100% - 28px));
+      margin:0 auto;
+      padding:28px 0 48px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:18px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;
+      display:grid;place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      box-shadow:0 8px 18px rgba(49,87,213,.25);
+    }
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(229,231,235,.85);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .screen{display:none}
+    .screen.active{display:block}
+    .hero{
+      padding:48px 34px 42px;
+      text-align:center;
+    }
+    .eyebrow{
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:999px;
+      color:var(--primary);
+      background:#eef2ff;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(30px,6vw,46px);
+      line-height:1.18;
+      letter-spacing:-.04em;
+    }
+    .hero p{
+      margin:18px auto 0;
+      max-width:540px;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:16px;
+    }
+    .type-preview{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      margin:26px auto 30px;
+      max-width:560px;
+    }
+    .mini{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 12px;
+      background:#fff;
+      text-align:left;
+    }
+    .mini b{display:block;font-size:14px;margin-bottom:4px}
+    .mini span{font-size:12px;color:var(--muted)}
+    .btn{
+      border:none;
+      border-radius:14px;
+      padding:15px 22px;
+      cursor:pointer;
+      font-weight:800;
+      transition:.18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      box-shadow:0 10px 22px rgba(49,87,213,.24);
+    }
+    .btn-ghost{
+      color:var(--text);
+      background:#f3f4f6;
+    }
+    .note{
+      margin-top:18px;
+      font-size:12px;
+      color:#8b93a1;
+      line-height:1.55;
+    }
+    .quiz-head{
+      padding:24px 26px 18px;
+      border-bottom:1px solid var(--line);
+    }
+    .topline{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      margin-bottom:12px;
+    }
+    .counter{font-weight:800;color:var(--primary)}
+    .category{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#f3f4f6;
+      color:#5f6773;
+      font-weight:700;
+    }
+    .progress{
+      width:100%;height:9px;border-radius:999px;background:#edf0f5;overflow:hidden;
+    }
+    .progress > div{
+      height:100%;width:0;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      transition:width .25s ease;
+    }
+    .quiz-body{padding:30px 26px 26px}
+    .question{
+      margin:0 0 22px;
+      font-size:clamp(21px,4.6vw,28px);
+      line-height:1.45;
+      letter-spacing:-.03em;
+    }
+    .options{display:grid;gap:12px}
+    .option{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      width:100%;
+      text-align:left;
+      padding:16px 17px;
+      border-radius:16px;
+      border:1.5px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      color:var(--text);
+      line-height:1.55;
+      transition:.16s ease;
+    }
+    .option:hover{
+      border-color:#aebaf7;
+      background:#f8f9ff;
+      transform:translateY(-1px);
+    }
+    .option.selected{
+      border-color:var(--primary);
+      background:#f2f5ff;
+      box-shadow:0 0 0 3px rgba(49,87,213,.08);
+    }
+    .letter{
+      flex:0 0 30px;height:30px;border-radius:10px;
+      display:grid;place-items:center;
+      background:#f0f2f7;
+      font-weight:900;color:#4b5563;
+    }
+    .option.selected .letter{background:var(--primary);color:#fff}
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:24px;
+    }
+    .result{
+      padding:38px 30px 34px;
+      text-align:center;
+    }
+    .result-icon{
+      width:84px;height:84px;border-radius:26px;
+      margin:0 auto 18px;
+      display:grid;place-items:center;
+      font-size:42px;
+      background:#eef2ff;
+    }
+    .result h2{
+      margin:0;
+      font-size:clamp(28px,6vw,42px);
+      letter-spacing:-.04em;
+    }
+    .result-sub{
+      margin:10px 0 0;
+      color:var(--primary);
+      font-weight:800;
+      font-size:17px;
+    }
+    .result-desc{
+      max-width:590px;
+      margin:20px auto 0;
+      color:#555f6e;
+      line-height:1.8;
+      text-align:left;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:20px;
+    }
+    .result-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin:20px 0;
+      text-align:left;
+    }
+    .result-box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#fff;
+    }
+    .result-box b{display:block;margin-bottom:8px}
+    .result-box span{color:var(--muted);font-size:14px;line-height:1.55}
+    .score-area{
+      margin:24px 0 6px;
+      text-align:left;
+    }
+    .score-title{font-weight:900;margin-bottom:12px}
+    .score-row{margin-bottom:11px}
+    .score-label{
+      display:flex;justify-content:space-between;
+      font-size:13px;font-weight:700;margin-bottom:6px;
+    }
+    .bar{
+      height:10px;border-radius:999px;background:#edf0f5;overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+    }
+    .actions{
+      display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px;
+    }
+    .tie-note{
+      margin-top:12px;
+      font-size:13px;
+      color:#6b7280;
+    }
+    @media(max-width:560px){
+      .hero,.result{padding:34px 20px 28px}
+      .quiz-head{padding:20px 18px 16px}
+      .quiz-body{padding:24px 18px 20px}
+      .type-preview,.result-grid{grid-template-columns:1fr}
+      .nav{flex-direction:column-reverse}
+      .nav .btn{width:100%}
+    }
+    @media print{
+      body{background:#fff}
+      .brand,.actions,.note{display:none!important}
+      .wrap{width:100%;padding:0}
+      .card{box-shadow:none;border:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="brand">
+      <div class="brand-mark">✓</div>
+      <div>내부통제 참여형 콘텐츠</div>
+    </div>
+
+    <section class="card">
+      <div id="startScreen" class="screen active">
+        <div class="hero">
+          <span class="eyebrow">10문항 · 약 2분</span>
+          <h1>나의 내부통제<br>업무 유형은?</h1>
+          <p>
+            업무 상황에서 내가 주로 어떤 방식으로 판단하고 대응하는지 확인해보세요.
+            각 문항에서 나와 가장 가까운 답변 하나를 선택하면 됩니다.
+          </p>
+
+          <div class="type-preview">
+            <div class="mini"><b>원칙수호형</b><span>규정과 기준을 중심으로 판단</span></div>
+            <div class="mini"><b>공감소통형</b><span>대화와 관계를 중심으로 해결</span></div>
+            <div class="mini"><b>근거분석형</b><span>데이터와 사실을 중심으로 검토</span></div>
+            <div class="mini"><b>균형조정형</b><span>전체 맥락과 조화를 중심으로 판단</span></div>
+          </div>
+
+          <button class="btn btn-primary" onclick="startQuiz()">검사 시작하기</button>
+          <div class="note">
+            본 검사는 캠페인 참여를 위한 간이 콘텐츠이며 인사평가·의학적·심리학적 진단에 사용되지 않습니다.
+          </div>
+        </div>
+      </div>
+
+      <div id="quizScreen" class="screen">
+        <div class="quiz-head">
+          <div class="topline">
+            <div id="counter" class="counter">1 / 10</div>
+            <div id="category" class="category">일반 내부통제</div>
+          </div>
+          <div class="progress"><div id="progressBar"></div></div>
+        </div>
+
+        <div class="quiz-body">
+          <h2 id="questionText" class="question"></h2>
+          <div id="options" class="options"></div>
+          <div class="nav">
+            <button id="prevBtn" class="btn btn-ghost" onclick="prevQuestion()">이전</button>
+            <button id="nextBtn" class="btn btn-primary" onclick="nextQuestion()" disabled>다음</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="resultScreen" class="screen">
+        <div class="result">
+          <div id="resultIcon" class="result-icon">🛡️</div>
+          <div class="eyebrow">검사 결과</div>
+          <h2 id="resultTitle">원칙수호형</h2>
+          <div id="resultSub" class="result-sub"></div>
+          <div id="tieNote" class="tie-note"></div>
+
+          <div id="resultDesc" class="result-desc"></div>
+
+          <div class="result-grid">
+            <div class="result-box">
+              <b>강점</b>
+              <span id="resultStrength"></span>
+            </div>
+            <div class="result-box">
+              <b>보완 포인트</b>
+              <span id="resultCaution"></span>
+            </div>
+          </div>
+
+          <div class="score-area">
+            <div class="score-title">유형별 응답 비율</div>
+            <div id="scoreBars"></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" onclick="copyResult()">결과 복사</button>
+            <button class="btn btn-ghost" onclick="window.print()">결과 저장·인쇄</button>
+            <button class="btn btn-ghost" onclick="restartQuiz()">다시 검사하기</button>
+          </div>
+
+          <div class="note">
+            동점인 경우 공동 유형으로 표시됩니다. 응답은 서버로 전송되지 않고 현재 기기에서만 계산됩니다.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+const questions = [
+  {
+    category:"일반 내부통제",
+    q:"부서 간 의견 충돌이 생겼다.",
+    options:[
+      "관련 규정과 기준을 다시 정리해 원칙을 확인한다.",
+      "양측이 자유롭게 의견을 낼 수 있는 자리를 만든다.",
+      "실제 데이터와 근거 자료를 재확인한다.",
+      "전체 업무 흐름을 고려해 절충안을 제시한다."
+    ]
+  },
+  {
+    category:"일반 내부통제",
+    q:"예산 집행 과정에서 규정 해석이 애매한 상황이 발생했다.",
+    options:[
+      "유권해석이나 선례를 찾아 기준을 확립한다.",
+      "관련 부서와 협의해 공감대를 형성한다.",
+      "유사 사례의 집행 데이터를 비교·분석한다.",
+      "예산 목적과 전체 상황을 고려해 합리적으로 판단한다."
+    ]
+  },
+  {
+    category:"일반 내부통제",
+    q:"동일한 유형의 오류가 반복적으로 발생하고 있다.",
+    options:[
+      "표준 매뉴얼을 재정비해 기준을 명확히 한다.",
+      "담당자들과 함께 논의하며 원인을 공유한다.",
+      "반복 발생 데이터를 분석해 근본 원인을 찾는다.",
+      "전체 프로세스를 재설계하는 관점에서 접근한다."
+    ]
+  },
+  {
+    category:"인권 관련",
+    q:"공항 현장 내 AI 서비스 확대 방안을 논의 중이다.",
+    options:[
+      "교통약자까지 고려해 이용 기준을 점검한다.",
+      "차별 발생 가능 요소를 점검한다.",
+      "안전 기준 충족 여부를 우선 확인한다.",
+      "운영 기준과 적용 절차부터 수립한다."
+    ]
+  },
+  {
+    category:"일반 내부통제",
+    q:"급한 요청 때문에 확인 절차를 건너뛰고 싶은 유혹이 든다.",
+    options:[
+      "아무리 급해도 확인 절차는 지킨다.",
+      "담당자와 상의해 현실적인 방법을 찾는다.",
+      "절차를 건너뛸 때의 리스크를 먼저 따져본다.",
+      "긴급성과 절차 준수 사이에서 균형점을 찾는다."
+    ]
+  },
+  {
+    category:"직장 내 괴롭힘",
+    q:"특정 직원만 지속적으로 업무에서 배제되고 있다.",
+    options:[
+      "업무 분장 기준에 따라 배분이 적절한지 확인한다.",
+      "해당 직원과 편하게 이야기를 나눠본다.",
+      "실제 업무 배분 현황을 데이터로 확인한다.",
+      "팀 전체의 협업 방식을 재점검한다."
+    ]
+  },
+  {
+    category:"성실 의무",
+    q:"동료가 근무시간 중 사적인 용무를 자주 처리하는 것을 알게 되었다.",
+    options:[
+      "근무 기강 관련 기준을 다시 살펴본다.",
+      "동료에게 편하게 상황을 물어본다.",
+      "얼마나 자주 그런 일이 있었는지 확인해본다.",
+      "업무 영향과 관계를 함께 고려해 대응한다."
+    ]
+  },
+  {
+    category:"공항 공용업무",
+    q:"귀빈(VIP) 이용객 측에서 특별한 편의를 요청해왔다.",
+    options:[
+      "제공 가능한 범위의 기준을 먼저 확인한다.",
+      "요청 배경을 듣고 정중하게 안내한다.",
+      "유사 요청 사례를 참고해 판단한다.",
+      "형평성과 상황을 함께 고려해 결정한다."
+    ]
+  },
+  {
+    category:"청렴·소통",
+    q:"후배가 업무 사용법을 몰라 여러 번 질문한다.",
+    options:[
+      "매뉴얼을 안내해 스스로 찾아보게 한다.",
+      "편하게 물어보라고 하며 직접 알려준다.",
+      "어떤 질문이 반복되는지 확인해본다.",
+      "질문하기 편한 분위기와 업무 효율 사이에서 방법을 찾는다."
+    ]
+  },
+  {
+    category:"청렴·소통",
+    q:"선후배 간 보고 방식(메신저, 이메일, 인쇄물 등)에 대한 선호가 다르다.",
+    options:[
+      "정해진 보고 기준이 있는지 확인한다.",
+      "선호하는 방식을 서로 편하게 대화한다.",
+      "각 보고 방식의 장단점을 비교한다.",
+      "상황에 맞게 보고 방식을 유연하게 조율한다."
+    ]
+  }
+];
+
+const types = {
+  A:{
+    name:"원칙수호형",
+    sub:"기준이 흔들리지 않을 때 조직의 신뢰도 지켜집니다.",
+    icon:"🛡️",
+    desc:"당신은 규정, 절차, 기준을 중심으로 판단하는 경향이 강합니다. 업무가 급하거나 이해관계가 복잡할수록 먼저 원칙을 확인해 예측 가능한 방식으로 처리하려 합니다.",
+    strength:"일관된 판단, 규정 준수, 책임 소재 명확화, 위험 예방",
+    caution:"상황별 맥락이나 구성원의 현실적인 어려움을 충분히 듣는 과정도 함께 보완하면 좋습니다."
+  },
+  B:{
+    name:"공감소통형",
+    sub:"사람 사이의 대화가 문제 해결의 출발점입니다.",
+    icon:"💬",
+    desc:"당신은 관계자들의 의견과 감정을 충분히 듣고 공감대를 형성하는 방식으로 문제를 해결합니다. 갈등 상황에서도 일방적인 결론보다 소통 가능한 분위기를 만드는 데 강점이 있습니다.",
+    strength:"경청, 갈등 완화, 협업 분위기 조성, 구성원 참여 촉진",
+    caution:"공감에만 머물지 않도록 최종 판단 기준과 실행 책임을 명확히 정리하는 것이 중요합니다."
+  },
+  C:{
+    name:"근거분석형",
+    sub:"정확한 판단은 사실과 데이터에서 시작됩니다.",
+    icon:"📊",
+    desc:"당신은 감이나 관행보다 실제 자료, 사례, 데이터를 확인한 뒤 판단하는 경향이 강합니다. 반복 오류나 모호한 상황에서도 원인을 구조적으로 분석하려 합니다.",
+    strength:"객관적 판단, 원인 분석, 오류 탐지, 재발 방지",
+    caution:"자료 수집과 분석에 시간이 오래 걸리지 않도록 판단 시점과 필요한 정보의 범위를 정해두면 좋습니다."
+  },
+  D:{
+    name:"균형조정형",
+    sub:"전체 흐름을 보며 현실적인 해법을 찾습니다.",
+    icon:"⚖️",
+    desc:"당신은 규정, 사람, 데이터, 업무 목적을 함께 고려해 현실적인 균형점을 찾는 경향이 강합니다. 한 가지 기준만 고집하기보다 조직 전체의 흐름을 보며 조정합니다.",
+    strength:"상황 판단, 이해관계 조정, 유연한 대안 제시, 전체 최적화",
+    caution:"유연성이 원칙의 예외로 오해되지 않도록 판단 근거와 조정 과정을 기록하는 것이 필요합니다."
+  }
+};
+
+let current = 0;
+let answers = Array(questions.length).fill(null);
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(el=>el.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function startQuiz(){
+  current=0;
+  answers=Array(questions.length).fill(null);
+  showScreen("quizScreen");
+  renderQuestion();
+}
+function renderQuestion(){
+  const item=questions[current];
+  document.getElementById("counter").textContent=`${current+1} / ${questions.length}`;
+  document.getElementById("category").textContent=item.category;
+  document.getElementById("progressBar").style.width=`${((current+1)/questions.length)*100}%`;
+  document.getElementById("questionText").textContent=`Q${current+1}. ${item.q}`;
+
+  const options=document.getElementById("options");
+  options.innerHTML="";
+  item.options.forEach((text,idx)=>{
+    const btn=document.createElement("button");
+    btn.className="option"+(answers[current]===idx?" selected":"");
+    btn.innerHTML=`<span class="letter">${["A","B","C","D"][idx]}</span><span>${text}</span>`;
+    btn.onclick=()=>selectOption(idx);
+    options.appendChild(btn);
+  });
+
+  document.getElementById("prevBtn").style.visibility=current===0?"hidden":"visible";
+  const nextBtn=document.getElementById("nextBtn");
+  nextBtn.disabled=answers[current]===null;
+  nextBtn.textContent=current===questions.length-1?"결과 보기":"다음";
+}
+function selectOption(idx){
+  answers[current]=idx;
+  renderQuestion();
+}
+function nextQuestion(){
+  if(answers[current]===null) return;
+  if(current<questions.length-1){
+    current++;
+    renderQuestion();
+  }else{
+    showResult();
+  }
+}
+function prevQuestion(){
+  if(current>0){
+    current--;
+    renderQuestion();
+  }
+}
+function showResult(){
+  const score=[0,0,0,0];
+  answers.forEach(v=>score[v]++);
+  const max=Math.max(...score);
+  const winners=score.map((v,i)=>v===max?["A","B","C","D"][i]:null).filter(Boolean);
+
+  const primary=types[winners[0]];
+  document.getElementById("resultIcon").textContent=primary.icon;
+  document.getElementById("resultTitle").textContent=
+    winners.length===1 ? primary.name : winners.map(k=>types[k].name).join(" × ");
+  document.getElementById("resultSub").textContent=
+    winners.length===1 ? primary.sub : "두 가지 이상의 강점이 비슷하게 나타난 복합 유형입니다.";
+
+  const tieNote=document.getElementById("tieNote");
+  tieNote.textContent=winners.length>1
+    ? `동점 결과: ${winners.map(k=>types[k].name).join(", ")}`
+    : "";
+
+  if(winners.length===1){
+    document.getElementById("resultDesc").textContent=primary.desc;
+    document.getElementById("resultStrength").textContent=primary.strength;
+    document.getElementById("resultCaution").textContent=primary.caution;
+  }else{
+    document.getElementById("resultDesc").textContent=
+      winners.map(k=>types[k].desc).join(" ");
+    document.getElementById("resultStrength").textContent=
+      winners.map(k=>types[k].strength).join(" · ");
+    document.getElementById("resultCaution").textContent=
+      "상황에 따라 강점을 선택적으로 활용하되, 최종 판단 기준과 근거를 분명히 남겨보세요.";
+  }
+
+  const bars=document.getElementById("scoreBars");
+  bars.innerHTML="";
+  ["A","B","C","D"].forEach((k,i)=>{
+    const pct=Math.round(score[i]/questions.length*100);
+    bars.innerHTML+=`
+      <div class="score-row">
+        <div class="score-label"><span>${types[k].name}</span><span>${score[i]}문항 · ${pct}%</span></div>
+        <div class="bar"><div style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  showScreen("resultScreen");
+}
+function copyResult(){
+  const title=document.getElementById("resultTitle").textContent;
+  const sub=document.getElementById("resultSub").textContent;
+  const text=`나의 내부통제 업무 유형은 [${title}]입니다.\n${sub}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("결과가 복사되었습니다.");
+  }).catch(()=>{
+    prompt("아래 내용을 복사하세요.",text);
+  });
+}
+function restartQuiz(){
+  current=0;
+  answers=Array(questions.length).fill(null);
+  showScreen("startScreen");
+}
+</script>
+</body>
+</html>
